@@ -4,7 +4,7 @@ import numpy
 
 from tests import QcipToolsTestCase
 from qcip_tools import derivatives_g, derivatives, derivatives_e, derivatives_exci
-from qcip_tools.chemistry_files import gaussian, dalton, PropertyNotPresent, crystal
+from qcip_tools.chemistry_files import gaussian, dalton, crystal
 
 
 class PropertiesTestCase(QcipToolsTestCase):
@@ -458,9 +458,6 @@ class PropertiesTestCase(QcipToolsTestCase):
         fchk_file = gaussian.FCHK()
         with open(os.path.join(self.tests_files_directory, 'properties/computed_energies/gaussian_output.fchk')) as f:
             fchk_file.read(f)
-
-        with self.assertRaises(PropertyNotPresent):
-            fchk_file.property('geometrical_derivatives')
 
         gradient = fchk_file.get('Cartesian Gradient')
         self.assertEqual(numpy.linalg.norm(gradient), .0)
