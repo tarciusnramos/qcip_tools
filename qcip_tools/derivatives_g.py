@@ -339,7 +339,9 @@ class MassWeightedHessian:
 
         U_v *= constants.R * self.ENERGY_IN_AU_CONVERSION
 
-        return U_t, U_r, U_v
+        U_e = 0
+
+        return U_e, U_t, U_r, U_v
 
     def compute_enthalpy(self, temperature=298.15):
         """Compute the value of the different contribution (translation, rotation, vibration) to the enthalpy,
@@ -356,8 +358,8 @@ class MassWeightedHessian:
         :rtype: tuple
         """
 
-        U_t, U_r, U_v = self.compute_internal_energy(temperature)
-        return U_t + constants.R * temperature * self.ENERGY_IN_AU_CONVERSION, U_r, U_v
+        U_e, U_t, U_r, U_v = self.compute_internal_energy(temperature)
+        return U_e, U_t + constants.R * temperature * self.ENERGY_IN_AU_CONVERSION, U_r, U_v
 
     def compute_entropy(self, symmetry_number, temperature=298.15, pressure=1.01325e5):
         """Compute the value of the different contribution (translation, rotation, vibration) to the entropy,
@@ -420,7 +422,7 @@ class MassWeightedHessian:
         :rtype: tuple
         """
 
-        H_t, H_r, H_v = self.compute_enthalpy(temperature)
+        H_e, H_t, H_r, H_v = self.compute_enthalpy(temperature)
         S_e, S_t, S_r, S_v = self.compute_entropy(symmetry_number, temperature, pressure)
 
-        return -temperature * S_e, H_t - temperature * S_t, H_r - temperature * S_r, H_v - temperature * S_v
+        return H_e - temperature * S_e, H_t - temperature * S_t, H_r - temperature * S_r, H_v - temperature * S_v

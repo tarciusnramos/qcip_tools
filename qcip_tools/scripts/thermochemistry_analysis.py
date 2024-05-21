@@ -146,11 +146,11 @@ def main():
     def treat(x, f=False):
         if not f:
             x.append(x[-1] + zpva)
-            x.append(sum(x[:3]) + zpva)
+            x.append(sum(x[:4]) + zpva)
             x.append(x[-1] + electronic_energy)
         else:
             x.append(x[-1])
-            x.append(sum(x[:3]))
+            x.append(sum(x[:4]))
             x.append(x[-1])
 
         if not args.verbose:
@@ -173,13 +173,14 @@ def main():
 
         return s
 
-    dashes = '-' * (5 + 16 * (6 if args.verbose else 1))
+    dashes = '-' * (5 + 16 * (7 if args.verbose else 1))
 
     print(dashes)
 
     print('     ', end='')
     if args.verbose:
-        print('  trans.          rot.            vib.            vib. + ZPVA     total w/o scf ', end='')
+        print('  elec.           trans.          rot.            vib.            vib. + ZPVA     total w/o scf ',
+              end='')
     print('  total w. scf')
 
     print(dashes)
