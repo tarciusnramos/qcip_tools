@@ -21,7 +21,7 @@ then save the tensors and related quantities into another csv file. Rely on the 
 def get_arguments_parser(string=None):
     parser = argparse.ArgumentParser(description='Extract the LoProp of a selection of domains.')
     parser.add_argument('file', help='Files to be analysed.')
-    parser.add_argument('-o', '--output_file', help='Output base name file. Default: electrical_derivatives.csv',
+    parser.add_argument('-o', '--output-file', help='Output base name file. Default: electrical_derivatives.csv',
                         default='electrical_derivatives.csv', type=str)
 
     return parser.parse_args(string)

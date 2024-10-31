@@ -71,7 +71,7 @@ def get_arguments_parser():
     arguments_parser = argparse.ArgumentParser(description=__doc__)
     arguments_parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
     arguments_parser.add_argument('-csv', default=False, action='store_true')
-    arguments_parser.add_argument('--save_components', default=False, action='store_true')
+    arguments_parser.add_argument('--save-components', default=False, action='store_true')
     arguments_parser.add_argument('-q', '--quiet', default=False, action='store_true')
 
     arguments_parser.add_argument(
