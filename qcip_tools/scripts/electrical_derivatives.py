@@ -11,6 +11,7 @@ import pandas as pd
 import qcip_tools.scripts
 from qcip_tools import derivatives_e, quantities
 from qcip_tools.chemistry_files import helpers, PropertyNotPresent
+import platform
 
 __version__ = '0.3'
 __author__ = 'Pierre Beaujean'
@@ -70,6 +71,7 @@ def get_arguments_parser():
     arguments_parser = argparse.ArgumentParser(description=__doc__)
     arguments_parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
     arguments_parser.add_argument('-csv', default=False, action='store_true')
+    arguments_parser.add_argument('--save_components', default=False, action='store_true')
     arguments_parser.add_argument('-q', '--quiet', default=False, action='store_true')
 
     arguments_parser.add_argument(
@@ -81,7 +83,7 @@ def get_arguments_parser():
     return arguments_parser
 
 
-def append_data(electrical_derivatives, to_data_frames, file_id):
+def append_data(electrical_derivatives, to_data_frames, file_id, save_components=False):
     representations = [
         'F',
         'FF',
@@ -97,13 +99,18 @@ def append_data(electrical_derivatives, to_data_frames, file_id):
         'dDDd',
         'xDDD',
     ]
-
+    components = {
+        'mu': [ f'mu_{i}' for i in 'x y z'.split() ],
+        'alpha': [ f'alpha_{i}{j}' for i in 'x y z'.split() for j in 'x y z'.split() ],
+        'beta': [f'beta_{i}{j}{k}' for i in 'x y z'.split() for j in 'x y z'.split() for k in 'x y z'.split() ],
+        'gamma': [f'gamma_{i}{j}{k}{l}' for i in 'x y z'.split() for j in 'x y z'.split() for k in 'x y z'.split() for l in 'x y z'.split() ],
+    }
     for representation in representations:
         if representation in electrical_derivatives:
             freqs = [x for x in electrical_derivatives[representation].keys()]
             freqs.sort(key=lambda x: derivatives_e.convert_frequency_from_string(x))
 
-            name = derivatives_e.NAMES[representation]
+            name = derivatives_e.NAMES[representation].replace('(', '_').replace(')', '')
 
             # include dipole if found
             kw = {}
@@ -117,19 +124,35 @@ def append_data(electrical_derivatives, to_data_frames, file_id):
                 if to_data_frames.get(df_name) is None:
                     to_data_frames[df_name] = {}
                 to_data_frames[df_name][file_id] = electrical_derivatives[representation][freq].properties
+                if save_components:
+                    prop = name.split('_')[0]
+                    components_dict = {}
+                    for c, v in zip(components[prop], electrical_derivatives[representation][freq].flatten_components()):
+                        components_dict[c] = v
+                    to_data_frames[df_name][file_id].update(components_dict)
+
 
 
 def save_data(to_data_frames):
     for df_name, data in to_data_frames.items():
         df = pd.DataFrame(data).transpose()
-        df.to_csv(df_name + '.csv', sep=';')
+        df.index.names = ['names']
+        df.to_csv(df_name + '.csv')
 
 
 def main():
     args = get_arguments_parser().parse_args()
     to_data_frames = {}
 
-    for file_name in args.infile:
+    if 'Windows' in platform.system():
+        from glob import glob
+        files = [ ]
+        for f in args.infile:
+            files.extend(glob(f))
+    else:
+        files = args.infile
+
+    for file_name in files:
         f = open(file_name)
         infile = helpers.open_chemistry_file(f)
         f.close()
@@ -169,7 +192,7 @@ def main():
             print_tensors(electrical_derivatives, 'XDDD')
 
         if args.csv:
-            append_data(electrical_derivatives, to_data_frames, infile.file_name)
+            append_data(electrical_derivatives, to_data_frames, infile.file_name, args.save_components)
 
     if args.csv:
         save_data(to_data_frames)

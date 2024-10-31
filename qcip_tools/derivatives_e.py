@@ -261,6 +261,9 @@ class BaseElectricalDerivativeTensor(derivatives.Tensor):
                 response[i] += tmp
 
         return response
+    
+    def flatten_components(self):
+        return self.components.flatten()
 
 
 class ElectricDipole(BaseElectricalDerivativeTensor):
