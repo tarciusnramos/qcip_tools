@@ -100,11 +100,18 @@ def append_data(electrical_derivatives, to_data_frames, file_id, save_components
         'xDDD',
     ]
     components = {
-        'mu': [ f'mu_{i}' for i in 'x y z'.split() ],
-        'alpha': [ f'alpha_{i}{j}' for i in 'x y z'.split() for j in 'x y z'.split() ],
-        'beta': [f'beta_{i}{j}{k}' for i in 'x y z'.split() for j in 'x y z'.split() for k in 'x y z'.split() ],
-        'gamma': [f'gamma_{i}{j}{k}{l}' for i in 'x y z'.split() for j in 'x y z'.split() for k in 'x y z'.split() for l in 'x y z'.split() ],
+        'mu':    [f'mu_{i}' for i in 'x y z'.split()],
+        'alpha': [f'alpha_{i}{j}' for i in 'x y z'.split()
+                                  for j in 'x y z'.split()],
+        'beta':  [f'beta_{i}{j}{k}' for i in 'x y z'.split()
+                                    for j in 'x y z'.split()
+                                    for k in 'x y z'.split()],
+        'gamma': [f'gamma_{i}{j}{k}{l}' for i in 'x y z'.split()
+                                        for j in 'x y z'.split()
+                                        for k in 'x y z'.split()
+                                        for l in 'x y z'.split()],
     }
+
     for representation in representations:
         if representation in electrical_derivatives:
             freqs = [x for x in electrical_derivatives[representation].keys()]
@@ -127,10 +134,10 @@ def append_data(electrical_derivatives, to_data_frames, file_id, save_components
                 if save_components:
                     prop = name.split('_')[0]
                     components_dict = {}
-                    for c, v in zip(components[prop], electrical_derivatives[representation][freq].flatten_components()):
+                    for c, v in zip(components[prop],
+                                    electrical_derivatives[representation][freq].components.flatten()):
                         components_dict[c] = v
                     to_data_frames[df_name][file_id].update(components_dict)
-
 
 
 def save_data(to_data_frames):
@@ -146,7 +153,7 @@ def main():
 
     if 'Windows' in platform.system():
         from glob import glob
-        files = [ ]
+        files = []
         for f in args.infile:
             files.extend(glob(f))
     else:
