@@ -64,21 +64,21 @@ def main():
     df = pd.read_csv(args.file)
 
     components = {
-        'mu':    [f'mu_{i}' for i in 'x y z'.split()],
+        'mu': [f'mu_{i}' for i in 'x y z'.split()],
         'alpha': [f'alpha_{i}{j}' for i in 'x y z'.split()
-                                  for j in 'x y z'.split()],
-        'beta':  [f'beta_{i}{j}{k}' for i in 'x y z'.split()
-                                    for j in 'x y z'.split()
-                                    for k in 'x y z'.split()],
-        'gamma': [f'gamma_{i}{j}{k}{l}' for i in 'x y z'.split()
-                                        for j in 'x y z'.split()
-                                        for k in 'x y z'.split()
-                                        for l in 'x y z'.split()],
+                  for j in 'x y z'.split()],
+        'beta': [f'beta_{i}{j}{k}' for i in 'x y z'.split()
+                 for j in 'x y z'.split()
+                 for k in 'x y z'.split()],
+        'gamma': [f'gamma_{i}{j}{k}{m}' for i in 'x y z'.split()
+                  for j in 'x y z'.split()
+                  for k in 'x y z'.split()
+                  for m in 'x y z'.split()],
     }
 
-    col_mu =    [c for c in df.columns if c in components['mu']]
+    col_mu = [c for c in df.columns if c in components['mu']]
     col_alpha = [c for c in df.columns if c in components['alpha']]
-    col_beta =  [c for c in df.columns if c in components['beta']]
+    col_beta = [c for c in df.columns if c in components['beta']]
     col_gamma = [c for c in df.columns if c in components['gamma']]
 
     new_data = {}
