@@ -314,6 +314,9 @@ class PolarisabilityTensor(BaseElectricalDerivativeTensor):
         """
         self.properties['alpha_iso'] = self.isotropic_value()
         self.properties['alpha_aniso'] = self.anisotropic_value()
+        self.properties['rayleigh_n'] = self.rayleigh_natural_light()
+        self.properties['rayleigh_lpara'] = self.rayleigh_parallel_linearly_light()
+        self.properties['rayleigh_lper'] = self.rayleigh_perpendicula_linearly_light()
 
     def isotropic_value(self):
         """Isotropic value:
@@ -343,6 +346,15 @@ class PolarisabilityTensor(BaseElectricalDerivativeTensor):
                 tmp += 3 * self.components[i, j] ** 2 - self.components[i, i] * self.components[j, j]
 
         return _sqrt_or_neg_sqrt(.5 * tmp)
+    
+    def rayleigh_natural_light(self):
+        return 45 * self.isotropic_value() ** 2.0 + 13 * self.anisotropic_value() ** 2.0
+
+    def rayleigh_parallel_linearly_light(self):
+        return 6 * self.anisotropic_value() ** 2.0
+
+    def rayleigh_perpendicula_linearly_light(self):
+        return 45 * self.isotropic_value() ** 2.0 + 7 * self.anisotropic_value() ** 2.0
 
     def to_string(self, threshold=1e-5, disable_extras=False, **kwargs):
         """Rewritten to add information
@@ -354,8 +366,11 @@ class PolarisabilityTensor(BaseElectricalDerivativeTensor):
         if not disable_extras:
             self.compute_properties()
 
-            for k, v in self.properties.items():
-                r += '{:7s}{: .5e}\n'.format(k, v)
+            r += 'alpha_iso  {: .5e}\n'.format(self.properties['alpha_iso'])
+            r += 'alpha_aniso{: .5e}\n'.format(self.properties['alpha_aniso'])
+            r += 'Rayleigh_n {: .5e}\n'.format(self.properties['rayleigh_n'])
+            r += 'Rayleigh_//{: .5e}\n'.format(self.properties['rayleigh_lpara'])
+            r += 'Rayleigh_|_{: .5e}\n'.format(self.properties['rayleigh_lper'])
 
         return r
 
