@@ -90,10 +90,6 @@ def main():
             mu.components = _columns_to_tensor(row[col_mu])
             mu.compute_properties()
             new_data = append_data(new_data, mu.properties)
-            components_dict = {}
-            for c, v in zip(components['mu'], mu.flatten_components()):
-                components_dict[c] = v
-            new_data = append_data(new_data, components_dict)
 
     if len(col_alpha) != 0:
         for _, row in df.iterrows():

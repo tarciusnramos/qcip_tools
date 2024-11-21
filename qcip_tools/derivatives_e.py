@@ -192,6 +192,9 @@ class BaseElectricalDerivativeTensor(derivatives.Tensor):
         self.name = self.to_name()
         self.properties = {}
 
+    def flatten_components(self):
+        return self.components.flatten()
+
     def to_string(self, threshold=1e-5, **kwargs):
         """Rewritten to get a better output with this kind of tensor
         """
@@ -397,7 +400,7 @@ class FirstHyperpolarisabilityTensor(BaseElectricalDerivativeTensor):
             self.properties['beta_squared_zzz'] = self.beta_squared_zzz()
             self.properties['beta_hrs'] = \
                 _sqrt_or_neg_sqrt(self.properties['beta_squared_zxx'] + self.properties['beta_squared_zzz'])
-            self.properties['DR'] = self.properties['beta_squared_zzz'] / self.properties['beta_squared_zxx']
+            self.properties['DR_hrs'] = self.properties['beta_squared_zzz'] / self.properties['beta_squared_zxx']
 
             # "old" version
             self.properties['dipolar_contribution'] = self.dipolar_contribution(old_version=True)
@@ -879,7 +882,7 @@ class FirstHyperpolarisabilityTensor(BaseElectricalDerivativeTensor):
                 r += '<B2zzz>    {: .5e}\n'.format(self.properties['beta_squared_zzz'])
                 r += '<B2zxx>    {: .5e}\n'.format(self.properties['beta_squared_zxx'])
                 r += 'beta_HRS   {: .5e}\n'.format(self.properties['beta_hrs'])
-                r += 'DR         {: .3f}\n'.format(self.properties['DR'])
+                r += 'DR         {: .3f}\n'.format(self.properties['DR_hrs'])
 
                 # "old" version
                 r += 'B|J=1|     {: .5e}\n'.format(self.properties['dipolar_contribution'])
@@ -931,7 +934,7 @@ class SecondHyperpolarizabilityTensor(BaseElectricalDerivativeTensor):
             self.properties['gamma_squared_zxxx'] = self.gamma_squared_zxxx()
             self.properties['gamma_THS'] = \
                 _sqrt_or_neg_sqrt(self.properties['gamma_squared_zzzz'] + self.properties['gamma_squared_zxxx'])
-            self.properties['DR'] = self.properties['gamma_squared_zzzz'] / self.properties['gamma_squared_zxxx']
+            self.properties['DR_ths'] = self.properties['gamma_squared_zzzz'] / self.properties['gamma_squared_zxxx']
             # "old" definition
             self.properties['isotropic_contribution'] = self.isotropic_contribution(old_version=True)
             self.properties['quadrupolar_contribution'] = self.quadrupolar_contribution(old_version=True)
@@ -1473,7 +1476,7 @@ class SecondHyperpolarizabilityTensor(BaseElectricalDerivativeTensor):
                 r += '<G2zzzz>   {: .5e}\n'.format(self.properties['gamma_squared_zzzz'])
                 r += '<G2zxxx>   {: .5e}\n'.format(self.properties['gamma_squared_zxxx'])
                 r += 'gamma_THS  {: .5e}\n'.format(self.properties['gamma_THS'])
-                r += 'DR         {: .3f}\n'.format(self.properties['DR'])
+                r += 'DR         {: .3f}\n'.format(self.properties['DR_ths'])
 
                 # "old" definition
                 r += 'G|J=0|     {: .5e}\n'.format(self.properties['isotropic_contribution'])
