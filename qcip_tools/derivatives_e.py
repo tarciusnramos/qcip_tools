@@ -348,12 +348,45 @@ class PolarisabilityTensor(BaseElectricalDerivativeTensor):
         return _sqrt_or_neg_sqrt(.5 * tmp)
 
     def rayleigh_natural_light(self):
+        """Rayleigh Natural Light value:
+        J. Elm, P. Norman, M. Bilde, K. V. Mikkelsen,
+        Computational study of the Rayleigh light scattering properties of atmospheric pre-nucleation clusters,
+        Phys. Chem. Chem. Phys. 16 (2014) 10883–10890. https://doi.org/10.1039/C4CP01206B.
+
+        .. math::
+
+            \\R_{NL}= 45\\alpha_{iso}^2 + 13\\alpha_{aniso}^2.
+
+        :rtype: float
+        """
         return 45 * self.isotropic_value() ** 2.0 + 13 * self.anisotropic_value() ** 2.0
 
     def rayleigh_parallel_linearly_light(self):
+        """Rayleigh Parallel Linearly Light value:
+        J. Elm, P. Norman, M. Bilde, K. V. Mikkelsen,
+        Computational study of the Rayleigh light scattering properties of atmospheric pre-nucleation clusters,
+        Phys. Chem. Chem. Phys. 16 (2014) 10883–10890. https://doi.org/10.1039/C4CP01206B.
+
+        .. math::
+
+            \\R_{p||}= 6\\alpha_{aniso}^2.
+
+        :rtype: float
+        """
         return 6 * self.anisotropic_value() ** 2.0
 
     def rayleigh_perpendicula_linearly_light(self):
+        """Rayleigh Perpendicular Linearly Light value:
+        J. Elm, P. Norman, M. Bilde, K. V. Mikkelsen,
+        Computational study of the Rayleigh light scattering properties of atmospheric pre-nucleation clusters,
+        Phys. Chem. Chem. Phys. 16 (2014) 10883–10890. https://doi.org/10.1039/C4CP01206B.
+
+        .. math::
+
+            \\R_{p_|_}= 45\\alpha_{iso}^2 + 7\\alpha_{aniso}^2.
+
+        :rtype: float
+        """
         return 45 * self.isotropic_value() ** 2.0 + 7 * self.anisotropic_value() ** 2.0
 
     def to_string(self, threshold=1e-5, disable_extras=False, **kwargs):

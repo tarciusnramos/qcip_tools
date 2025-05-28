@@ -7,13 +7,12 @@ import argparse
 import sys
 from scipy import constants
 import pandas as pd
-import itertools
-import numpy as np
+import platform
 
 import qcip_tools.scripts
 from qcip_tools import derivatives_e, quantities
 from qcip_tools.chemistry_files import helpers, PropertyNotPresent
-import platform
+from qcip_tools.transformations import TransformationMatrix as TM
 
 __version__ = '0.3'
 __author__ = 'Pierre Beaujean'
@@ -67,59 +66,10 @@ def print_tensors(electrical_derivatives, representation, rm=None):
                 name, to_nanometer(freq), derivatives_e.convert_frequency_from_string(freq)))
 
             if rm is not None:
-                a = tensor_rotate(electrical_derivatives[representation][freq].components, rm)
+                a = TM.rotate_matrix(electrical_derivatives[representation][freq].components, rm)
                 electrical_derivatives[representation][freq].components = a
 
             print(electrical_derivatives[representation][freq].to_string(**kw))
-
-
-def rotation_matrix_from_vectors(vec1, vec2):
-    """ Find the rotation matrix that aligns vec1 to vec2
-    :param vec1: A 3d "source" vector
-    :param vec2: A 3d "destination" vector
-    :return mat: A transform matrix (3x3) which when applied to vec1, aligns it with vec2.
-    """
-    a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
-    v = np.cross(a, b)
-    c = np.dot(a, b)
-    s = np.linalg.norm(v)
-    kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]], dtype=np.float64)
-    rotation_matrix = np.eye(3, dtype=np.float64) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
-    return rotation_matrix
-
-
-def tensor_rotate(tensor, rotation_matrix):
-    """Return a rotated tensor
-
-    .. warning::
-
-        To much magic here, will be deprecated at some point.
-
-    :param tensor: the tensor to be rotated
-    :type tensor: numpy.ndarray
-    :param psi: Rotation around the Z axis (in degree)
-    :type psi: float
-    :param theta: rotation around the y' axis (in degree)
-    :type theta: float
-    :param chi: Rotation around the z'' axis (in degree)
-    :type chi: float
-    :rtype: numpy.ndarray
-    """
-
-    new_tensor = np.zeros(tensor.shape)
-    order = len(tensor.shape)
-
-    for i in itertools.product(range(3), repeat=order):
-        tmp = .0
-        for j in itertools.product(range(3), repeat=order):
-            product = 1
-            for k in range(order):
-                product *= rotation_matrix[i[k], j[k]]
-            tmp += product * tensor[j]
-
-        new_tensor[i] = tmp
-
-    return new_tensor
 
 
 def get_arguments_parser():
@@ -233,8 +183,8 @@ def main():
         if args.vector is not None:
             if 'F' in electrical_derivatives:
                 dipole = electrical_derivatives['F']['static'].components
-                rotation_matrix = rotation_matrix_from_vectors(dipole, args.vector)
-                electrical_derivatives['F']['static'].components = tensor_rotate(dipole, rotation_matrix)
+                rotation_matrix = TM.rotation_matrix_from_vectors(dipole, args.vector)
+                electrical_derivatives['F']['static'].components = TM.rotate_matrix(dipole, rotation_matrix)
         else:
             print('No dipole to define a rotation matrix')
             rotation_matrix = None
