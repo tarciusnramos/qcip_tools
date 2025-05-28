@@ -121,13 +121,15 @@ def tensor_rotate(tensor, rotation_matrix):
 
     return new_tensor
 
+
 def get_arguments_parser():
     arguments_parser = argparse.ArgumentParser(description=__doc__)
     arguments_parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
     arguments_parser.add_argument('-csv', default=False, action='store_true')
     arguments_parser.add_argument('--save-components', default=False, action='store_true')
     arguments_parser.add_argument('-q', '--quiet', default=False, action='store_true')
-    arguments_parser.add_argument('--vector', default=None, help='rotate tensors to match the (a b c) direction.', nargs=3, type=float)
+    arguments_parser.add_argument('--vector', default=None,
+                                  help='rotate tensors to match the (a b c) direction.', nargs=3, type=float)
 
     arguments_parser.add_argument(
         'infile',

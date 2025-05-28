@@ -346,7 +346,7 @@ class PolarisabilityTensor(BaseElectricalDerivativeTensor):
                 tmp += 3 * self.components[i, j] ** 2 - self.components[i, i] * self.components[j, j]
 
         return _sqrt_or_neg_sqrt(.5 * tmp)
-    
+
     def rayleigh_natural_light(self):
         return 45 * self.isotropic_value() ** 2.0 + 13 * self.anisotropic_value() ** 2.0
 
