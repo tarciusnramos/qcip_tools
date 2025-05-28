@@ -180,14 +180,14 @@ def main():
         except PropertyNotPresent:
             return qcip_tools.scripts.exit_failure('cannot find electrical derivatives ({})'.format(infile.file_type))
 
+        rotation_matrix = None
         if args.vector is not None:
             if 'F' in electrical_derivatives:
                 dipole = electrical_derivatives['F']['static'].components
                 rotation_matrix = TM.rotation_matrix_from_vectors(dipole, args.vector)
                 electrical_derivatives['F']['static'].components = TM.rotate_matrix(dipole, rotation_matrix)
-        else:
-            print('No dipole to define a rotation matrix')
-            rotation_matrix = None
+            else:
+                print('No dipole to define a rotation matrix')
 
         if not args.quiet:
             # mu
